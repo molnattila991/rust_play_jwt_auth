@@ -1,0 +1,21 @@
+[package]
+name = "moat_tool_jwt_handler"
+version = "2.0.3"
+edition = "2021"
+description = "This is a test of my first Cargo publish"
+license = "Apache-2.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+#jwt token
+chrono = "0.4.19"
+jsonwebtoken = "8.1.1"
+rust-crypto = "0.2.36"
+thiserror = "1.0.32"
+serde = "1.0.143"
+serde_json = "1.0.83"
+awc = "3.0.1"
+reqwest="0.11.13"
+#web
+actix-web = "4.1.0"

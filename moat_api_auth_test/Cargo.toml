@@ -1,0 +1,17 @@
+[package]
+name = "moat_api_auth_test"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+moat_tool_jwt_handler = { path = "../moat_tool_jwt_handler" }
+dotenv = "0.15.0"
+serde = "1.0.143"
+serde_json = "1.0.83"
+actix-web = "4.1.0"
+actix-web-grants= "3.0.1"
+env_logger = "0.10.0"
+# awc = "3.0.1"
+reqwest = "0.11.13"
