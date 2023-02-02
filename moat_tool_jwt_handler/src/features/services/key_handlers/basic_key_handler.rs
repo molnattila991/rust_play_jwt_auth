@@ -1,6 +1,6 @@
 use std::fs;
 
-use crate::models::key::Keys;
+use crate::models::{key::Keys, jwk::JWK};
 
 use super::key_handler::{KeyHandler, PublicKeyHandler};
 
@@ -22,8 +22,12 @@ impl BasicKeyHandler {
 }
 
 impl KeyHandler for BasicKeyHandler {
-    fn get_keys(&self) -> &Keys {
-        &self.keys
+    fn get_jwk_keys(&self) -> Vec<JWK> {
+        self.keys.get_jwk_list()
+    }
+
+    fn get_latest_key(&self) -> crate::models::key::KeyToHash {
+        self.keys.get_latest_key()
     }
 }
 
