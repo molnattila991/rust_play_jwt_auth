@@ -1,7 +1,7 @@
 use crate::models::error::Error;
 use async_trait::async_trait;
 
-pub type TokenValidatorTrait = dyn TokenValidator + Send + Sync;
+pub type TokenValidatorSafe = dyn TokenValidator + Send + Sync;
 
 #[async_trait]
 pub trait TokenValidator {

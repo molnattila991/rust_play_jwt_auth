@@ -5,9 +5,7 @@ use crate::{
         jwt::{
             decode_jwt_token::decode_jwt_token, decode_jwt_token_header::decode_jwt_token_header,
         },
-        services::key_handlers::{
-            key_handler::PublicKeyHandler, remote_key_handler::RemoteKeyHandler,
-        },
+        services::key_handlers::key_handler::PublicKeyHandler,
     },
     models::error::Error,
 };
@@ -20,13 +18,13 @@ use super::token_validator::TokenValidator;
 pub struct RemoteUrlTokenValidator {
     key_handler: Arc<dyn PublicKeyHandler + Send + Sync>,
     validation_url: String,
-    http_client: Box<reqwest::Client>,
+    http_client: Arc<reqwest::Client>,
 }
 
 impl RemoteUrlTokenValidator {
     pub fn init(
         key_handler: Arc<dyn PublicKeyHandler + Send + Sync>,
-        http_client: Box<reqwest::Client>,
+        http_client: Arc<reqwest::Client>,
         validation_url: String,
     ) -> RemoteUrlTokenValidator {
         RemoteUrlTokenValidator {

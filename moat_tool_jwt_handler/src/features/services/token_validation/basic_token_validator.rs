@@ -7,7 +7,7 @@ use crate::{
         jwt::{
             decode_jwt_token::decode_jwt_token, decode_jwt_token_header::decode_jwt_token_header,
         },
-        services::key_handlers::key_handler::{KeyHandler, PublicKeyHandler},
+        services::key_handlers::key_handler::PublicKeyHandlerSafe,
     },
     models::error::Error,
 };
@@ -16,13 +16,11 @@ use super::token_validator::TokenValidator;
 
 #[derive(Clone)]
 pub struct BasicTokenValidator {
-    key_handler: Arc<dyn PublicKeyHandler + Send + Sync>,
+    key_handler: Arc<PublicKeyHandlerSafe>,
 }
 
 impl BasicTokenValidator {
-    pub fn init(
-        key_handler: Arc<dyn PublicKeyHandler + Send + Sync>,
-    ) -> BasicTokenValidator {
+    pub fn init(key_handler: Arc<PublicKeyHandlerSafe>) -> BasicTokenValidator {
         BasicTokenValidator {
             key_handler: key_handler,
         }
