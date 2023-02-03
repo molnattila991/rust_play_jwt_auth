@@ -1,4 +1,4 @@
-- cargo build in ./moat_tool_jwt_handler
-- cargo run in ./moat_api_auth
-- cargo run in ./moat_api_auth_test
+- cargo build
+- cargo run -p moat_api_auth
+- cargo run -p moat_api_auth_test
 - use endpoints in ./manual_test/endpoints.http file
