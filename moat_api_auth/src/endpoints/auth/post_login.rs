@@ -8,8 +8,8 @@ use moat_tool_jwt_handler::{
 use serde::{Deserialize, Serialize};
 
 #[get("/login/{name}")]
-pub async fn login(config: web::Data<dyn KeyHandler>, path: web::Path<String>) -> HttpResponse {
-    let hash_key = config.get_keys().get_latest_key();
+pub async fn login(config: web::Data<dyn KeyHandler + Send + Sync>, path: web::Path<String>) -> HttpResponse {
+    let hash_key = config.get_latest_key();
 
     let path = path.into_inner();
     let token = create_jwt_token(

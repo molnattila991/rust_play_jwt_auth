@@ -1,7 +1,8 @@
-use crate::models::{key::Keys, error::Error};
+use crate::models::{error::Error, jwk::JWK, key::KeyToHash};
 
 pub trait KeyHandler {
-    fn get_keys(&self) -> &Keys;
+    fn get_jwk_keys(&self) -> Vec<JWK>;
+    fn get_latest_key(&self) -> KeyToHash;
 }
 
 pub trait PublicKeyHandler {

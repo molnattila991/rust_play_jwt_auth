@@ -9,9 +9,9 @@ pub struct Key {
     expiration: i32,
 }
 
-pub struct KeyToHash<'a> {
-    pub kid: &'a str,
-    pub private_key: &'a str,
+pub struct KeyToHash {
+    pub kid: String,
+    pub private_key: String,
 }
 
 #[derive(Clone, Deserialize, Serialize, Debug)]
@@ -31,8 +31,8 @@ impl Keys {
 
     pub fn get_latest_key(&self) -> KeyToHash {
         KeyToHash {
-            kid: &self.latest_key.kid,
-            private_key: &self.latest_key.private_key,
+            kid: self.latest_key.kid.clone(),
+            private_key: self.latest_key.private_key.clone(),
         }
     }
 
