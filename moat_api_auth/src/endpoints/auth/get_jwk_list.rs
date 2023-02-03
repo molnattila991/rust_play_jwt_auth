@@ -5,8 +5,8 @@ use moat_tool_jwt_handler::{
 use serde::{Deserialize, Serialize};
 
 #[get("/jwk")]
-pub async fn get_jwk_list(config: web::Data<dyn KeyHandler>) -> HttpResponse {
-    let keys: Vec<JWK> = config.get_keys().get_jwk_list();
+pub async fn get_jwk_list(config: web::Data<dyn KeyHandler + Send + Sync>) -> HttpResponse {
+    let keys: Vec<JWK> = config.get_jwk_keys();
 
     HttpResponse::Ok().json(JWKResponse { jwk: keys })
 }

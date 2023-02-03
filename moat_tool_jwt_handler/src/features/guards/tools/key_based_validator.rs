@@ -4,10 +4,11 @@ use actix_web::{
     Error,
 };
 
-use crate::features::services::token_validation::token_validator::TokenValidator;
+use crate::features::services::token_validation::token_validator::TokenValidatorSafe;
 
-pub async fn key_based_validator<T: TokenValidator>(
-    token_validator: &T,
+
+pub async fn key_based_validator(
+    token_validator: &TokenValidatorSafe,
     headers: &HeaderMap,
 ) -> Result<Vec<String>, Error> {
     let token = get_bearer_token(headers);
@@ -16,7 +17,7 @@ pub async fn key_based_validator<T: TokenValidator>(
     }
     let token: &str = token.unwrap();
 
-    match token_validator.validate(&token) {
+    match token_validator.validate(&token).await {
         Ok(roles) => Ok(roles),
         Err(e) => {
             println!("{}", e);

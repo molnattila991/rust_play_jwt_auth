@@ -1,0 +1,2 @@
+[workspace]
+members = ["moat_tool_jwt_handler", "moat_api_auth", "moat_api_auth_test"]

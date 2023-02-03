@@ -1,3 +1,6 @@
+use std::sync::Arc;
+
+use reqwest::Client;
 use serde::{Deserialize, Serialize};
 
 use crate::models::jwk::JWK;
@@ -17,13 +20,13 @@ pub struct RemoteKeyHandler {
 }
 
 impl RemoteKeyHandler {
-    pub async fn init(jwk_endpoint_url: &str) -> RemoteKeyHandler {
-        let client = awc::Client::default();
+    pub async fn init(jwk_endpoint_url: &str, http_client: Arc<Client>) -> RemoteKeyHandler {
         let mut keys: Vec<KeyToResolve> = Vec::new();
 
-        let response = client.get(jwk_endpoint_url).send().await;
-        if let Ok(mut response) = response {
-            if let Ok(body) = response.json::<JWKRequest>().await {
+        let response = http_client.get(jwk_endpoint_url).send().await;
+        let response = serde_json::from_str::<JWKRequest>(&response.unwrap().text().await.unwrap());
+        match response {
+            Ok(body) => {
                 for jwk in body.jwk {
                     keys.push(KeyToResolve {
                         kid: jwk.kid,
@@ -31,11 +34,10 @@ impl RemoteKeyHandler {
                         exparation: jwk.exp,
                     })
                 }
-            } else {
-                println!("almaaa");
             }
-        } else {
-            println!("almaaa");
+            Err(_) => {
+                println!("Error during serialization");
+            }
         }
 
         RemoteKeyHandler { keys }
