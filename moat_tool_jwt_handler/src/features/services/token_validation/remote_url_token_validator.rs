@@ -18,15 +18,15 @@ use super::token_validator::TokenValidator;
 
 #[derive(Clone)]
 pub struct RemoteUrlTokenValidator {
-    key_handler: Arc<RemoteKeyHandler>,
+    key_handler: Arc<dyn PublicKeyHandler + Send + Sync>,
     validation_url: String,
-    http_client: Arc<reqwest::Client>,
+    http_client: Box<reqwest::Client>,
 }
 
 impl RemoteUrlTokenValidator {
     pub fn init(
-        key_handler: Arc<RemoteKeyHandler>,
-        http_client: Arc<reqwest::Client>,
+        key_handler: Arc<dyn PublicKeyHandler + Send + Sync>,
+        http_client: Box<reqwest::Client>,
         validation_url: String,
     ) -> RemoteUrlTokenValidator {
         RemoteUrlTokenValidator {

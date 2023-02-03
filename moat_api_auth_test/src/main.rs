@@ -8,7 +8,7 @@ use dotenv::dotenv;
 use moat_tool_jwt_handler::features::{
     guards::guard_remote_url::guard_remote_url,
     services::{
-        key_handlers::remote_key_handler::RemoteKeyHandler,
+        key_handlers::{key_handler::PublicKeyHandler, remote_key_handler::RemoteKeyHandler},
         token_validation::{
             remote_url_token_validator::RemoteUrlTokenValidator, token_validator::TokenValidator,
         },
@@ -24,22 +24,23 @@ async fn main() -> std::io::Result<()> {
 
     let key_handler = RemoteKeyHandler::init("http://localhost:8080/auth/jwk").await;
     let http_client = reqwest::Client::builder();
-    let http_client = Arc::new(http_client.build().unwrap());
+    let http_client = Box::new(http_client.build().unwrap());
 
-    let key_handler_arc: Arc<RemoteKeyHandler> = Arc::new(key_handler.clone());
-    let key_handler_data: Data<RemoteKeyHandler> = Data::from(key_handler_arc.clone());
+    let key_handler_arc: Arc<dyn PublicKeyHandler + Send + Sync> = Arc::new(key_handler.clone());
+
     let token_validator = RemoteUrlTokenValidator::init(
         key_handler_arc.clone(),
         http_client.clone(),
         String::from("http://localhost:8080/auth/tokens/validation"),
     );
+
     let token_validator_arc: Arc<dyn TokenValidator + Send + Sync> =
         Arc::new(token_validator.clone());
 
     HttpServer::new(move || {
         App::new()
             .app_data(Data::from(token_validator_arc.clone()))
-            .app_data(key_handler_data.clone())
+            .app_data(Data::from(key_handler_arc.clone()))
             .service(
                 web::scope("/users")
                     .wrap(GrantsMiddleware::with_extractor(guard_remote_url))

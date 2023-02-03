@@ -1,12 +1,12 @@
 use actix_web::{dev::ServiceRequest, error::ErrorUnauthorized, web::Data, Error};
 
-use crate::features::services::token_validation::token_validator::TokenValidator;
+use crate::features::services::token_validation::token_validator::TokenValidatorTrait;
 
 use super::tools::key_based_validator::get_bearer_token;
 
 pub async fn guard_remote_url(_req: &ServiceRequest) -> Result<Vec<String>, Error> {
     let headers = _req.headers();
-    let token_validator = _req.app_data::<Data<dyn TokenValidator + Send + Sync>>().unwrap();
+    let token_validator = _req.app_data::<Data<TokenValidatorTrait>>().unwrap();
 
     let token = get_bearer_token(headers);
     if token.is_err() {
