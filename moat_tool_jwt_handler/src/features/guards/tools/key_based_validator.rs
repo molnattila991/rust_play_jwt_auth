@@ -16,7 +16,7 @@ pub async fn key_based_validator<T: TokenValidator>(
     }
     let token: &str = token.unwrap();
 
-    match token_validator.validate(&token) {
+    match token_validator.validate(&token).await {
         Ok(roles) => Ok(roles),
         Err(e) => {
             println!("{}", e);

@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use async_trait::async_trait;
+
 use crate::{
     features::{
         jwt::{
@@ -27,8 +29,9 @@ impl BasicTokenValidator {
     }
 }
 
+#[async_trait]
 impl TokenValidator for BasicTokenValidator {
-    fn validate(&self, token: &str) -> Result<Vec<String>, Error> {
+    async fn validate(&self, token: &str) -> Result<Vec<String>, Error> {
         let kid = decode_jwt_token_header(token)?;
 
         let decoded_token = decode_jwt_token(token, &self.key_handler.get_public_key_by_id(&kid)?)?;

@@ -1,5 +1,7 @@
 use crate::models::error::Error;
+use async_trait::async_trait;
 
+#[async_trait]
 pub trait TokenValidator {
-    fn validate(&self, token: &str) -> Result<Vec<String>, Error>;
+    async fn validate(&self, token: &str) -> Result<Vec<String>, Error>;
 }

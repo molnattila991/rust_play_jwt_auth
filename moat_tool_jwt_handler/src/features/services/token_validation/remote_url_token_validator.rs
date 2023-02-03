@@ -11,6 +11,7 @@ use crate::{
     },
     models::error::Error,
 };
+use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 
 use super::token_validator::TokenValidator;
@@ -34,8 +35,16 @@ impl RemoteUrlTokenValidator {
             http_client,
         }
     }
+}
 
-    pub async fn validate(&self, token: &str) -> Result<Vec<String>, Error> {
+#[derive(Deserialize, Serialize)]
+pub struct TokenValidationResponse {
+    pub token_is_valid: bool,
+}
+
+#[async_trait]
+impl TokenValidator for RemoteUrlTokenValidator {
+    async fn validate(&self, token: &str) -> Result<Vec<String>, Error> {
         let kid = decode_jwt_token_header(token)?;
         let decoded_token = decode_jwt_token(token, &self.key_handler.get_public_key_by_id(&kid)?)?;
         let role_list = vec![decoded_token.role.to_string()];
@@ -59,21 +68,5 @@ impl RemoteUrlTokenValidator {
         } else {
             Err(Error::WrongCredentialsError)
         }
-    }
-}
-
-#[derive(Deserialize, Serialize)]
-pub struct TokenValidationResponse {
-    pub token_is_valid: bool,
-}
-
-impl TokenValidator for RemoteUrlTokenValidator {
-    fn validate(&self, token: &str) -> Result<Vec<String>, Error> {
-        let kid = decode_jwt_token_header(token)?;
-
-        let decoded_token = decode_jwt_token(token, &self.key_handler.get_public_key_by_id(&kid)?)?;
-        let role_list = vec![decoded_token.role.to_string()];
-
-        Ok(role_list)
     }
 }
