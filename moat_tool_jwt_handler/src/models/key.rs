@@ -3,9 +3,9 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Default, Clone, Deserialize, Serialize, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub struct Key {
-    kid: String,
+    pub kid: String,
     private_key: String,
-    public_key: String,
+    pub public_key: String,
     expiration: i32,
 }
 
@@ -16,7 +16,7 @@ pub struct KeyToHash {
 
 #[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct Keys {
-    keys: Vec<Key>,
+    pub keys: Vec<Key>,
 
     #[serde(skip_deserializing)]
     latest_key: Key,

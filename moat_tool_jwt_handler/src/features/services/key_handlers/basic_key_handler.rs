@@ -6,7 +6,7 @@ use super::key_handler::{KeyHandler, PublicKeyHandler};
 
 #[derive(Clone)]
 pub struct BasicKeyHandler {
-    keys: Keys,
+    pub keys: Keys,
 }
 
 impl BasicKeyHandler {

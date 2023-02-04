@@ -1,40 +1,28 @@
-use actix_web::{
-    error::ErrorUnauthorized,
-    http::header::{self, HeaderMap},
-    Error,
-};
+use actix_web::http::header::{self, HeaderMap};
 
-use crate::features::services::token_validation::token_validator::TokenValidator;
+use crate::{
+    features::services::token_validation::token_validator::TokenValidator, models::error::Error,
+};
 
 pub async fn key_based_validator(
     token_validator: &impl TokenValidator,
     headers: &HeaderMap,
 ) -> Result<Vec<String>, Error> {
     let token = get_bearer_token(headers);
-    if token.is_err() {
-        return Err(ErrorUnauthorized("Endpoint blocked!"));
-    }
     let token: &str = token.unwrap();
 
-    match token_validator.validate(&token).await {
-        Ok(roles) => Ok(roles),
-        Err(e) => {
-            println!("{}", e);
-            println!("Endpoint is blocked! Use valid bearer token...");
-            Err(ErrorUnauthorized("Endpoint blocked!"))
-        }
-    }
+    Ok(token_validator.validate(&token).await?)
 }
 
 pub fn get_bearer_token(headers: &HeaderMap) -> Result<&str, Error> {
     let _auth = headers.get(header::AUTHORIZATION);
     if _auth.is_none() {
-        return Err(ErrorUnauthorized("Endpoint is blocked!"));
+        return Err(Error::InvalidAuthHeaderError);
     }
 
     let _split: Vec<&str> = _auth.unwrap().to_str().unwrap().split("Bearer").collect();
     if _split.len() != 2 {
-        return Err(ErrorUnauthorized("Endpoint is blocked!"));
+        return Err(Error::InvalidAuthHeaderError);
     }
 
     Ok(_split[1].trim())
