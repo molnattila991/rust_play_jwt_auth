@@ -7,7 +7,9 @@ use crate::{
         jwt::{
             decode_jwt_token::decode_jwt_token, decode_jwt_token_header::decode_jwt_token_header,
         },
-        services::key_handlers::key_handler::PublicKeyHandlerSafe,
+        services::key_handlers::{
+            basic_key_handler::BasicKeyHandler, key_handler::PublicKeyHandler,
+        },
     },
     models::error::Error,
 };
@@ -15,20 +17,12 @@ use crate::{
 use super::token_validator::TokenValidator;
 
 #[derive(Clone)]
-pub struct BasicTokenValidator {
-    key_handler: Arc<PublicKeyHandlerSafe>,
-}
-
-impl BasicTokenValidator {
-    pub fn init(key_handler: Arc<PublicKeyHandlerSafe>) -> BasicTokenValidator {
-        BasicTokenValidator {
-            key_handler: key_handler,
-        }
-    }
+pub struct BasicTokenValidator<T: PublicKeyHandler> {
+    pub key_handler: Arc<T>,
 }
 
 #[async_trait]
-impl TokenValidator for BasicTokenValidator {
+impl TokenValidator for BasicTokenValidator<BasicKeyHandler> {
     async fn validate(&self, token: &str) -> Result<Vec<String>, Error> {
         let kid = decode_jwt_token_header(token)?;
 

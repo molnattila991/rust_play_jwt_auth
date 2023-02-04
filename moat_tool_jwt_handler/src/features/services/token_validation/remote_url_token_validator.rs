@@ -5,7 +5,7 @@ use crate::{
         jwt::{
             decode_jwt_token::decode_jwt_token, decode_jwt_token_header::decode_jwt_token_header,
         },
-        services::key_handlers::key_handler::PublicKeyHandler,
+        services::key_handlers::{key_handler::PublicKeyHandler, remote_key_handler::RemoteKeyHandler},
     },
     models::error::Error,
 };
@@ -15,18 +15,18 @@ use serde::{Deserialize, Serialize};
 use super::token_validator::TokenValidator;
 
 #[derive(Clone)]
-pub struct RemoteUrlTokenValidator {
-    key_handler: Arc<dyn PublicKeyHandler + Send + Sync>,
+pub struct RemoteUrlTokenValidator<T: PublicKeyHandler> {
+    key_handler: Arc<T>,
     validation_url: String,
     http_client: Arc<reqwest::Client>,
 }
 
-impl RemoteUrlTokenValidator {
+impl RemoteUrlTokenValidator<RemoteKeyHandler> {
     pub fn init(
-        key_handler: Arc<dyn PublicKeyHandler + Send + Sync>,
+        key_handler: Arc<RemoteKeyHandler>,
         http_client: Arc<reqwest::Client>,
         validation_url: String,
-    ) -> RemoteUrlTokenValidator {
+    ) -> RemoteUrlTokenValidator<RemoteKeyHandler> {
         RemoteUrlTokenValidator {
             key_handler: key_handler,
             validation_url: validation_url,
@@ -41,7 +41,7 @@ pub struct TokenValidationResponse {
 }
 
 #[async_trait]
-impl TokenValidator for RemoteUrlTokenValidator {
+impl TokenValidator for RemoteUrlTokenValidator<RemoteKeyHandler> {
     async fn validate(&self, token: &str) -> Result<Vec<String>, Error> {
         let kid = decode_jwt_token_header(token)?;
         let decoded_token = decode_jwt_token(token, &self.key_handler.get_public_key_by_id(&kid)?)?;

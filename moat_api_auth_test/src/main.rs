@@ -27,7 +27,7 @@ async fn main() -> std::io::Result<()> {
     let http_client = Arc::new(reqwest::Client::builder().build().unwrap());
     let key_handler =
         RemoteKeyHandler::init("http://localhost:8080/auth/jwk", http_client.clone()).await;
-    let key_handler: Arc<PublicKeyHandlerSafe> = Arc::new(key_handler.clone());
+    let key_handler: Arc<RemoteKeyHandler> = Arc::new(key_handler.clone());
 
     let token_validator = RemoteUrlTokenValidator::init(
         key_handler.clone(),
@@ -35,7 +35,8 @@ async fn main() -> std::io::Result<()> {
         String::from("http://localhost:8080/auth/tokens/validation"),
     );
 
-    let token_validator: Arc<TokenValidatorSafe> = Arc::new(token_validator.clone());
+    let token_validator: Arc<RemoteUrlTokenValidator<RemoteKeyHandler>> =
+        Arc::new(token_validator.clone());
 
     HttpServer::new(move || {
         App::new()

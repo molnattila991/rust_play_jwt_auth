@@ -8,9 +8,7 @@ use moat_tool_jwt_handler::features::services::{
         basic_key_handler::BasicKeyHandler,
         key_handler::{KeyHandlerSafe, PublicKeyHandlerSafe},
     },
-    token_validation::{
-        basic_token_validator::BasicTokenValidator, token_validator::TokenValidatorSafe,
-    },
+    token_validation::basic_token_validator::BasicTokenValidator,
 };
 use std::sync::Arc;
 
@@ -22,8 +20,11 @@ async fn main() -> std::io::Result<()> {
 
     let key_handler = BasicKeyHandler::init("./keys.json");
     let key_handler = Arc::new(key_handler.clone());
-    let token_validator = BasicTokenValidator::init(key_handler.clone());
-    let token_validator: Arc<TokenValidatorSafe> = Arc::new(token_validator.clone());
+    let token_validator = BasicTokenValidator {
+        key_handler: key_handler.clone(),
+    };
+    let token_validator: Arc<BasicTokenValidator<BasicKeyHandler>> =
+        Arc::new(token_validator.clone());
 
     HttpServer::new(move || {
         let app = App::new()
