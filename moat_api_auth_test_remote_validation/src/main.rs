@@ -1,4 +1,4 @@
-use std::{future::Future, sync::Arc};
+use std::sync::Arc;
 
 use actix_web::{
     get,
@@ -10,7 +10,7 @@ use dotenv::dotenv;
 use moat_tool_jwt_handler::features::{
     guards::guard_remote_url::guard_remote_url,
     services::{
-        key_handlers::{key_handler::PublicKeyHandlerSafe, remote_key_handler::RemoteKeyHandler},
+        key_handlers::remote_key_handler::RemoteKeyHandler,
         token_validation::{
             remote_url_token_validator::RemoteUrlTokenValidator,
             token_validator::TokenValidatorSafe,

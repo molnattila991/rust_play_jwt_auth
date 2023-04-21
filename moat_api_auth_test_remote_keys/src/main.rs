@@ -12,6 +12,7 @@ use moat_tool_jwt_handler::features::{
     services::{
         key_handlers::{key_handler::PublicKeyHandlerSafe, remote_key_handler::RemoteKeyHandler},
         token_validation::{
+            basic_token_validator::BasicTokenValidator,
             remote_url_token_validator::RemoteUrlTokenValidator,
             token_validator::TokenValidatorSafe,
         },
@@ -33,11 +34,7 @@ async fn main() -> std::io::Result<()> {
         RemoteKeyHandler::init("http://localhost:8080/auth/jwk", http_client.clone()).await;
     let key_handler: Arc<PublicKeyHandlerSafe> = Arc::new(key_handler.clone());
 
-    let token_validator = RemoteUrlTokenValidator::init(
-        key_handler.clone(),
-        http_client.clone(),
-        String::from("http://localhost:8080/auth/tokens/validation"),
-    );
+    let token_validator = BasicTokenValidator::init(key_handler.clone());
 
     let token_validator: Arc<TokenValidatorSafe> = Arc::new(token_validator.clone());
 
