@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{sync::Arc, future::Future};
 
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
@@ -25,6 +25,29 @@ impl RemoteKeyHandler {
 
         let response = http_client.get(jwk_endpoint_url).send().await;
         let response = serde_json::from_str::<JWKRequest>(&response.unwrap().text().await.unwrap());
+        match response {
+            Ok(body) => {
+                for jwk in body.jwk {
+                    keys.push(KeyToResolve {
+                        kid: jwk.kid,
+                        public_key: jwk.modulus,
+                        exparation: jwk.exp,
+                    })
+                }
+            }
+            Err(_) => {
+                println!("Error during serialization");
+            }
+        }
+
+        RemoteKeyHandler { keys }
+    }
+
+    pub async fn init2(get_jwk_response: impl Future<Output = Result<String, String>>) -> RemoteKeyHandler {
+        let mut keys: Vec<KeyToResolve> = Vec::new();
+
+        let response = get_jwk_response.await;
+        let response = serde_json::from_str::<JWKRequest>(&response.unwrap());
         match response {
             Ok(body) => {
                 for jwk in body.jwk {

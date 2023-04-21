@@ -1,6 +1,6 @@
-pub mod models;
-pub mod features;
 pub mod configs;
+pub mod features;
+pub mod models;
 
 #[cfg(test)]
 mod tests {

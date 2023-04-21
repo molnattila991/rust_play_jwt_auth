@@ -1,4 +1,5 @@
 - cargo build
 - cargo run -p moat_api_auth
-- cargo run -p moat_api_auth_test
+- cargo run -p moat_api_auth_test_remote_keys
+- cargo run -p moat_api_auth_test_remote_validation
 - use endpoints in ./manual_test/endpoints.http file

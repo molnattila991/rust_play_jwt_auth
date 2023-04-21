@@ -1,5 +1,5 @@
 [package]
-name = "moat_api_auth_test"
+name = "moat_api_auth_test_remote_validation"
 version = "0.1.0"
 edition = "2021"
 

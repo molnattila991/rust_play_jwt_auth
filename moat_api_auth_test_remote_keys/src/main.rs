@@ -24,6 +24,10 @@ async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "debug");
     env_logger::init();
 
+    // let key_handler = Arc::new(RemoteKeyHandler::init("./keys.json"));
+    // let token_validator: Arc<TokenValidatorSafe> =
+    //     Arc::new(BasicTokenValidator::init(key_handler.clone()));
+
     let http_client = Arc::new(reqwest::Client::builder().build().unwrap());
     let key_handler =
         RemoteKeyHandler::init("http://localhost:8080/auth/jwk", http_client.clone()).await;
@@ -47,7 +51,7 @@ async fn main() -> std::io::Result<()> {
                     .service(get_protected),
             )
     })
-    .bind(("127.0.0.1", 8090))?
+    .bind(("127.0.0.1", 8091))?
     .run()
     .await
 }

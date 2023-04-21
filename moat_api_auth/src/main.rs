@@ -20,10 +20,10 @@ async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "debug");
     env_logger::init();
 
-    let key_handler = BasicKeyHandler::init("./keys.json");
-    let key_handler = Arc::new(key_handler.clone());
-    let token_validator = BasicTokenValidator::init(key_handler.clone());
-    let token_validator: Arc<TokenValidatorSafe> = Arc::new(token_validator.clone());
+    
+    let key_handler = Arc::new(BasicKeyHandler::init("./keys.json"));
+    let token_validator: Arc<TokenValidatorSafe> =
+        Arc::new(BasicTokenValidator::init(key_handler.clone()));
 
     HttpServer::new(move || {
         let app = App::new()
